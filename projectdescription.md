@@ -1,17 +1,16 @@
-# Projectbeschrijving: Game Data Analytics
+# Project Description: Game Data Analytics
 
-## Projectoverzicht
-Dit is een Data Engineering project gericht op het verzamelen en analyseren van in-game gegevens van gebruikers. Het hoofddoel van dit project is om gegevens van verschillende games op te halen via een API en gebruikersgegevens te extraheren door web scraping van stat-tracker websites. De gebruiker moet in staat zijn om het programma uit te voeren, hun in-game gebruikersnaam op te geven, en de specifieke game waarover ze gegevens willen verzamelen. Vervolgens worden de relevante gegevens opgehaald en gevisualiseerd om inzicht te bieden in de statistieken van die game. Als extra functionaliteit wordt ook een PowerBI-dashboard overwogen om de gegevens op een gebruiksvriendelijke manier weer te geven voor gebruikers zonder programmeerkennis.
+## Project Overview
+This is a Data Engineering project focused on collecting and analyzing in-game user data. The main objective of this project is to retrieve data from various games via an API and extract user data through web scraping from stat-tracker websites. Users should be able to run the program, input their in-game username, and specify the game for which they want to collect data. Subsequently, relevant data will be retrieved and visualized to provide insights into the statistics of that game. As an additional feature, the consideration of creating a PowerBI dashboard to display the data in a user-friendly manner for users without programming knowledge is also on the table.
 
-## Motivatie
-Dit project wordt aangedreven door een persoonlijke interesse in het monitoren van in-game statistieken en het competitieve aspect van gaming. Het gebruik van stat-trackers om in-game gegevens in te zien heeft altijd al mijn aandacht getrokken, en ik wil deze interesse combineren met mijn programeer kennis en vaardigheden om meer te bereiken.
+## Motivation
+This project is driven by a personal interest in monitoring in-game statistics and the competitive aspect of gaming. The use of stat-trackers to view in-game data has always captured my attention, and I want to combine this interest with my programming knowledge and skills to achieve more.
 
-## Projectdoelen
-Dit project heeft meerdere doelen:
+## Project Goals
+This project has multiple goals:
 
-- Het ophalen van gegevens van verschillende games via een API.
-- Het verzamelen van gebruikersgegevens en statistieken van verschillende games door middel van web scraping.
-- Het ontwikkelen van een Jupyter Notebook waarin gebruikers de naam van het spel kunnen opgeven en gedetailleerde statistieken kunnen genereren.
-- Het overwegen van de mogelijkheid om ook de gebruikersnaam in te voeren om statistieken voor verschillende spelers op te halen.
-- Optioneel, indien de tijd het toelaat, het creëren van een PowerBI-dashboard dat algemene statistieken op een gebruiksvriendelijke manier weergeeft.
-
+- Retrieving data from various games through an API.
+- Collecting user data and statistics from various games through web scraping.
+- Developing a Jupyter Notebook in which users can input the game's name and generate detailed statistics.
+- Considering the possibility of allowing users to input their usernames to retrieve statistics for different players.
+- Optionally, if time allows, creating a PowerBI dashboard that displays general statistics in a user-friendly manner.
