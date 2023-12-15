@@ -2,7 +2,7 @@
 # Game Data Analytics Project
 
 ## Project Overview
-This is a Data Engineering project focused on collecting and analyzing in-game data of users. The main goal of this project is to retrieve data from the Riot games titles and extract user statistics using the Riot games API. Users should be able to run the program, input their in-game username, and specify the game for which they want to collect data. Subsequently, the relevant data will be fetched and visualized to provide insights into the game's statistics. As an additional feature, the project also considers creating a PowerBI dashboard to present the data in a user-friendly manner for those without programming knowledge.
+This is a Data Engineering project focused on collecting and analyzing in-game data of users. The main goal of this project is to retrieve data from League of Legends and extract user statistics using the Riot games API. Users should be able to run the program, input the in-game username for which they want to collect data. Subsequently, the relevant data will be fetched and visualized to provide insights into the game's statistics. As an additional feature, the project also considers creating a PowerBI dashboard to present the data in a user-friendly manner for those without programming knowledge.
 
 ## Motivation
 This project is driven by a personal interest in monitoring in-game statistics and the competitive aspect of gaming. The use of stat trackers to analyze in-game data has always caught my attention, and I want to combine this interest with my knowledge and skills to achieve more.
@@ -10,14 +10,13 @@ This project is driven by a personal interest in monitoring in-game statistics a
 ## Project Goals
 This project encompasses several objectives:
 
-- Retrieving data from Riot games titles using their API.
-- Collecting user data and statistics for different games through the same API.
-- Developing a Jupyter Notebook where users can input the game's name and generate comprehensive statistics.
-- Considering the possibility of entering the username to fetch statistics for different players.
+- Retrieving data from League of Legends using their API.
+- Collecting user data and statistics for League of Legends through the same API.
+- Developing a Jupyter Notebook where users can input a in-game username and generate comprehensive statistics.
 - Optionally, creating a PowerBI dashboard that presents general statistics in a user-friendly way.
 
 ## Data Sources
-- **Riot Games API**: This API will serve as the source for game and user-related information, including details about different games, their mechanics, all user stats and other game-specific data. More information on how to use this API can be found in the project's documentation.
+- **Riot Games API**: This API will serve as the source for game and user-related information, including details about the game itself, their mechanics, all user stats and other game-specific data. More information on how to use this API can be found in the project's documentation.
 
 ## Setup Instructions
 To get started with the project, follow these steps:
@@ -33,9 +32,9 @@ To get started with the project, follow these steps:
    pip install -r requirements.txt
    ```
 
-3. Create a configuration file (e.g., `config.yaml`) to store API keys and other project-specific settings. Make sure to include your Riot API key and any other necessary credentials.
+3. Create a configuration file (e.g., `config.py`) to store API keys and other project-specific settings. Make sure to include your Riot API key and any other necessary credentials.
 
-4. Run the Jupyter Notebook (`game_data_analytics.ipynb`) to interact with the project. This notebook will guide you through fetching game data and user statistics.
+4. Run the Jupyter Notebook (`main.ipynb`) to interact with the project. This notebook will guide you through fetching game data and user statistics.
 
 5. Optionally, set up a PowerBI dashboard by following the documentation provided in the `powerbi/` directory.
 
