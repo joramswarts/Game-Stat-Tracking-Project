@@ -13,7 +13,6 @@ def get_summoner_lol_data(api_key, summoner_name, region):
         print(f"Error: {response.status_code}, {response.text}")
         return None
 
-
 def get_match_ids(api_key, puuid, region, queue_type=None, start_time=None, end_time=None, count=50):
     region_mappings = {
         'na1': 'americas',
@@ -68,7 +67,7 @@ def get_match_ids(api_key, puuid, region, queue_type=None, start_time=None, end_
     except Exception as e:
         print(f"Exception during match ID retrieval: {e}")
         return None
-    
+
 
 def get_match_data(api_key, match_id, region):
     routing_value = get_routing_value(region)
@@ -94,10 +93,8 @@ def get_match_data(api_key, match_id, region):
     except Exception as e:
         print(f"Exception during match data retrieval: {e}")
         return None
-    
-def calculate_win_percentage_per_role(matches, summoner_puuid):
-    total_matches = len(matches)
 
+def calculate_win_percentage_per_role(matches, summoner_puuid):
     # Filter out None values from matches
     valid_matches = [match for match in matches if match is not None]
 
@@ -125,14 +122,12 @@ def calculate_win_percentage_per_role(matches, summoner_puuid):
                                     role_wins[role] += 1
 
         overall_win_percentage = (overall_wins / overall_matches_with_wins) * 100 if overall_matches_with_wins > 0 else 0
-        print(f"Overall Win Percentage: {overall_win_percentage:.2f}%")
 
-        win_percentages = {"Overall": overall_win_percentage}
+        win_percentages = {"Overall": {"Win Percentage": overall_win_percentage, "Total Matches": overall_matches_with_wins}}
 
         for role in ["TOP", "JUNGLE", "MIDDLE", "BOTTOM", "UTILITY"]:
             role_win_percentage = (role_wins[role] / role_matches_with_wins[role]) * 100 if role_matches_with_wins[role] > 0 else 0
-            print(f"Win Percentage for {role.capitalize()} role: {role_win_percentage:.2f}%")
-            win_percentages[role.capitalize()] = role_win_percentage
+            win_percentages[role.capitalize()] = {"Win Percentage": role_win_percentage, "Total Matches": role_matches_with_wins[role]}
 
         return win_percentages
     else:
