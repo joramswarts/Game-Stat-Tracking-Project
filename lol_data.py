@@ -81,8 +81,14 @@ def get_match_data(api_key, match_id, region):
 
         if response.status_code == 200:
             match_data = response.json()
-            # Voeg hier een controle toe voor het gametype
             if 'info' in match_data and 'gameMode' in match_data['info'] and match_data['info']['gameMode'].lower() == 'classic':
+                # Extract champion info from the match data and add it to each participant
+                for participant in match_data['info']['participants']:
+                    champion_id = participant.get('championId')
+                    if champion_id:
+                        champion_info = {"id": champion_id, "name": participant.get("championName", "Unknown")}
+                        participant['championInfo'] = champion_info
+
                 return match_data
             else:
                 print(f"Skipping match ID {match_id} as it is not a classic game.")
@@ -93,6 +99,7 @@ def get_match_data(api_key, match_id, region):
     except Exception as e:
         print(f"Exception during match data retrieval: {e}")
         return None
+
 
 def calculate_win_percentage_per_role(matches, summoner_puuid):
     # Filter out None values from matches
@@ -109,6 +116,9 @@ def calculate_win_percentage_per_role(matches, summoner_puuid):
         for match in valid_matches:
             if 'info' in match and 'participants' in match['info']:
                 for participant in match['info']['participants']:
+                    champion_info = participant.get('championInfo', {})
+                    champion_name = champion_info.get('name', 'Unknown')
+                    print(f"Champion Name: {champion_name}, Champion ID: {champion_info.get('id')}")
                     if 'individualPosition' in participant:
                         role = participant['individualPosition']
                         # Check if the role is valid
@@ -122,11 +132,13 @@ def calculate_win_percentage_per_role(matches, summoner_puuid):
                                     role_wins[role] += 1
 
         overall_win_percentage = (overall_wins / overall_matches_with_wins) * 100 if overall_matches_with_wins > 0 else 0
+        print(f"Overall Win Percentage: {overall_win_percentage:.2f}% (Total Matches: {overall_matches_with_wins})")
 
         win_percentages = {"Overall": {"Win Percentage": overall_win_percentage, "Total Matches": overall_matches_with_wins}}
 
         for role in ["TOP", "JUNGLE", "MIDDLE", "BOTTOM", "UTILITY"]:
             role_win_percentage = (role_wins[role] / role_matches_with_wins[role]) * 100 if role_matches_with_wins[role] > 0 else 0
+            print(f"Win Percentage for {role.capitalize()} role: {role_win_percentage:.2f}% (Total Matches: {role_matches_with_wins[role]})")
             win_percentages[role.capitalize()] = {"Win Percentage": role_win_percentage, "Total Matches": role_matches_with_wins[role]}
 
         return win_percentages
