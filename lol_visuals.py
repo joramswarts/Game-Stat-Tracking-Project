@@ -34,8 +34,6 @@ def visualize_win_percentages(win_percentages):
     plt.show()
 
 
-
-
 def plot_win_percentage_over_time(matches, summoner_data):
     # Verzamel datums voor elke wedstrijd
     match_dates = [datetime.datetime.utcfromtimestamp(match['info']['gameCreation'] // 1000).strftime('%Y-%m-%d') for match in matches]
@@ -80,3 +78,57 @@ def plot_win_percentage_over_time(matches, summoner_data):
     plt.xticks(rotation=45)
     plt.tight_layout()
     plt.show()
+
+def visualize_champion_stats(matches, summoner_data):
+    summoner_puuid = summoner_data['puuid']
+
+    champion_stats = {}
+
+    for match in matches:
+        if 'info' in match and 'participants' in match['info']:
+            for participant in match['info']['participants']:
+                if 'championInfo' in participant and participant['puuid'] == summoner_puuid:
+                    champion_name = participant['championInfo']['name']
+                    if champion_name not in champion_stats:
+                        champion_stats[champion_name] = {'Wins': 0, 'TotalGames': 0, 'KDA': 0}
+
+                    champion_stats[champion_name]['TotalGames'] += 1
+                    if participant.get('win', False):
+                        champion_stats[champion_name]['Wins'] += 1
+
+                    # Calculate KDA (kills + assists / deaths)
+                    kills = participant['kills']
+                    deaths = participant['deaths']
+                    assists = participant['assists']
+                    champion_stats[champion_name]['KDA'] += (kills + assists) / max(1, deaths)
+
+    for champion_name, stats in champion_stats.items():
+        stats['WinRate'] = (stats['Wins'] / stats['TotalGames']) * 100 if stats['TotalGames'] > 0 else 0
+        stats['KDA'] /= stats['TotalGames']
+
+    # Visualization using matplotlib
+    labels = list(champion_stats.keys())
+    win_rates = [data['WinRate'] for data in champion_stats.values()]
+    kdas = [data['KDA'] for data in champion_stats.values()]
+    total_games = [data['TotalGames'] for data in champion_stats.values()]
+
+    fig, ax = plt.subplots(figsize=(12, 7))
+
+    bars = ax.bar(labels, win_rates, alpha=0.7, label='Win Rate')
+
+    for bar, kda, games, win_rate in zip(bars, kdas, total_games, win_rates):
+        text_kda = f'KDA: {kda:.2f}\nGames: {games}\nWin Rate: {win_rate:.2f}%'
+        text_x = bar.get_x() + bar.get_width() / 2
+        text_y = bar.get_height()
+
+        ax.text(text_x, text_y / 2, text_kda, ha='center', va='center', color='black', fontsize=8)
+
+    plt.title('Champion Win Rate with Games Played, Win Rate, and KDA')
+    plt.xlabel('Champion')
+    plt.ylabel('Win Rate (%)')
+
+    plt.legend()
+    plt.xticks(rotation=45)
+    plt.tight_layout()
+    plt.show()
+
