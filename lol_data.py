@@ -1,5 +1,5 @@
 import requests
-
+import json
 def get_summoner_lol_data(api_key, summoner_name, region):
     lol_url = f'https://{region}.api.riotgames.com/lol/summoner/v4/summoners/by-name/{summoner_name}'
     headers = {'X-Riot-Token': api_key}
@@ -166,3 +166,15 @@ def get_routing_value(region):
     }
 
     return region_mappings.get(region.lower(), region.lower())
+
+
+
+def get_item_name(item_id):
+    item_data_url = "https://ddragon.leagueoflegends.com/cdn/13.24.1/data/en_US/item.json"
+    response = requests.get(item_data_url)
+    item_data = json.loads(response.text)
+
+    if 'data' in item_data and str(item_id) in item_data['data']:
+        return item_data['data'][str(item_id)]['name']
+    else:
+        return f"Unknown Item {item_id}"
