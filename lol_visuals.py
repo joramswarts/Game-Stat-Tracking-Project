@@ -1,4 +1,6 @@
 import matplotlib.pyplot as plt
+import plotly.graph_objects as go
+from lol_data import get_item_name
 import datetime
 
 def visualize_win_percentages(win_percentages):
@@ -108,27 +110,121 @@ def visualize_champion_stats(matches, summoner_data):
 
     # Visualization using matplotlib
     labels = list(champion_stats.keys())
-    win_rates = [data['WinRate'] for data in champion_stats.values()]
     kdas = [data['KDA'] for data in champion_stats.values()]
+    win_rates = [data['WinRate'] for data in champion_stats.values()]
     total_games = [data['TotalGames'] for data in champion_stats.values()]
 
     fig, ax = plt.subplots(figsize=(12, 7))
 
-    bars = ax.bar(labels, win_rates, alpha=0.7, label='Win Rate')
+    bars = ax.bar(labels, kdas, alpha=0.7, label='KDA')
 
-    for bar, kda, games, win_rate in zip(bars, kdas, total_games, win_rates):
-        text_kda = f'KDA: {kda:.2f}\nGames: {games}\nWin Rate: {win_rate:.2f}%'
+    for bar, kda, win_rate, games in zip(bars, kdas, win_rates, total_games):
+        text_kda = f'KDA: {kda:.2f}\nWR: {win_rate:.2f}%\nGames: {games}'
         text_x = bar.get_x() + bar.get_width() / 2
         text_y = bar.get_height()
 
-        ax.text(text_x, text_y / 2, text_kda, ha='center', va='center', color='black', fontsize=8)
+        ax.text(text_x, text_y / 2, text_kda, ha='center', va='center', color='black', fontsize=5.5)
 
-    plt.title('Champion Win Rate with Games Played, Win Rate, and KDA')
+    plt.title('Champion KDA with Win Rate and Games Played')
     plt.xlabel('Champion')
-    plt.ylabel('Win Rate (%)')
+    plt.ylabel('KDA')
 
     plt.legend()
     plt.xticks(rotation=45)
     plt.tight_layout()
     plt.show()
+
+
+def create_table_visual(matches, summoner_puuid):
+    # Create the table_data
+    table_data = []
+
+    # Dictionary to store win and total match counts for each champion and build combination
+    champion_build_stats = {}
+
+    for match in matches:
+        if 'info' in match and 'participants' in match['info']:
+            for participant in match['info']['participants']:
+                if participant['puuid'] == summoner_puuid:
+                    # Extract relevant information
+                    champion_name = participant['championInfo']['name']
+                    items = [f"{i+1}. {get_item_name(participant[f'item{i}'])}" for i in range(4)]
+                    win = participant.get('win', False)
+
+                    # Add data to the table_data
+                    table_data.append({
+                        'Champion Name': champion_name,
+                        'Item Build': items,
+                        'Win': win
+                    })
+
+                    # Update champion and build stats
+                    key = (champion_name, tuple(items))
+                    if key not in champion_build_stats:
+                        champion_build_stats[key] = {'wins': 0, 'total_matches': 0}
+                    champion_build_stats[key]['total_matches'] += 1
+                    if win:
+                        champion_build_stats[key]['wins'] += 1
+
+# Create a dictionary to store unique builds for each champion
+    unique_builds = {}
+
+    for match in matches:
+        if 'info' in match and 'participants' in match['info']:
+            for participant in match['info']['participants']:
+                if participant['puuid'] == summoner_puuid:
+                    # Extract relevant information
+                    champion_name = participant['championInfo']['name']
+                    items = [get_item_name(participant[f'item{i}']) for i in range(4)]
+                    win = participant.get('win', False)
+
+                    # Update champion and build stats
+                    key = (champion_name, tuple(items))
+                    if key not in unique_builds:
+                        unique_builds[key] = {'wins': 0, 'total_matches': 0}
+                    unique_builds[key]['total_matches'] += 1
+                    if win:
+                        unique_builds[key]['wins'] += 1
+
+# Create the table_data using unique builds
+    table_data = []
+    for key, stats in unique_builds.items():
+        champion_name, items = key
+        win_percentage = (stats['wins'] / stats['total_matches']) * 100 if stats['total_matches'] > 0 else 0
+
+        # Add data to the table_data
+        table_data.append({
+            'Champion Name': champion_name,
+            'Item Build': [f"{i+1}. {item}" for i, item in enumerate(items)],
+            'Result': f"{win_percentage:.2f}% ({stats['wins']} wins, {stats['total_matches'] - stats['wins']} losses)",
+            'Win Percentage': win_percentage
+        })
+
+# Sort table_data based on 'Champion Name' alphabetically and 'Win Percentage' in descending order
+    table_data = sorted(table_data, key=lambda x: (x['Champion Name'], -x['Win Percentage']))
+
+# Create the table figure
+    fig = go.Figure(data=[go.Table(
+        header=dict(values=['<b>Champion Name<b>', '<b>Item Build<b>', '<b>Result<b>'],
+                    fill_color='#191A24',  # Set background color for header
+                    font=dict(color='#56C596'),  # Set text color for header
+                    align='left'),
+        cells=dict(values=[
+            [entry['Champion Name'] for entry in table_data],
+            ['<br>'.join(entry['Item Build']) for entry in table_data],
+            [entry['Result'] for entry in table_data]
+        ],
+                fill_color='#232448',  # Set background color for cells
+                font=dict(color='#56C596'),  # Set text color for cells
+                align='left'))
+    ])
+
+# Set layout properties for a scrollable table
+    fig.update_layout(
+        height=600,
+        autosize=True,
+        margin=dict(l=0, r=0, b=0, t=0),
+    )
+
+    fig.show()
 
