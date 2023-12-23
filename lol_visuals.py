@@ -2,6 +2,9 @@ import matplotlib.pyplot as plt
 import plotly.graph_objects as go
 from lol_data import get_item_name
 import datetime
+import seaborn as sns
+import numpy as np
+
 
 def visualize_win_percentages(win_percentages):
     # Visualization using matplotlib
@@ -228,3 +231,51 @@ def create_table_visual(matches, summoner_puuid):
 
     fig.show()
 
+def visualize_champion_synergy(champion_synergy, top_champions, min_games_played=2):
+    # Set up subplots for each top champion
+    num_top_champions = len(top_champions)
+    fig, axes = plt.subplots(num_top_champions, 2, figsize=(15, 10 * num_top_champions), sharey='row', gridspec_kw={'hspace': 0.5})
+    fig.suptitle('Champion Synergy for your top 3 most played champions', y=1.02)
+
+    for i, champion in enumerate(top_champions):
+        # Extract synergy data for the current champion
+        synergy_data = champion_synergy[champion]
+
+        # Filter teammate champions with games played greater than the threshold and non-zero winrate
+        filtered_synergy_data = {teammate: data for teammate, data in synergy_data.items() if data['games_played'] >= min_games_played and np.mean(data['winrate']) > 0}
+
+        # Plot Winrate Synergy
+        winrate_synergy = {teammate: np.mean(data['winrate']) * 100 if data['winrate'] else np.nan for teammate, data in filtered_synergy_data.items()}
+        sorted_winrate_synergy = sorted(winrate_synergy.items(), key=lambda x: x[1], reverse=True)
+        teammate_names, winrates = zip(*sorted_winrate_synergy)
+
+        sns.barplot(x=winrates, y=teammate_names, hue=teammate_names, ax=axes[i, 0], palette='viridis', dodge=False)
+        axes[i, 0].set_title(f'Winrate Synergy for {champion}')
+        axes[i, 0].set_xlabel('Winrate (%)')
+        axes[i, 0].set_ylabel('Teammate Champion')
+        axes[i, 0].legend().set_visible(False)  # Hide legend
+        axes[i, 0].tick_params(axis='y', labelrotation=0, labelsize=8)  # Rotate and adjust y-axis labels
+
+        # Add winrate values to the bars
+        for bar, winrate, teammate_name in zip(axes[i, 0].patches, winrates, teammate_names):
+            height = bar.get_height()
+            axes[i, 0].text(bar.get_x() + bar.get_width() + 1, bar.get_y() + height / 2, f'{winrate:.2f}%', ha='left', va='center', fontsize=8, color='black')
+
+        # Plot KDA Synergy
+        kda_synergy = {teammate: np.mean(data['kda']) if data['kda'] else np.nan for teammate, data in filtered_synergy_data.items()}
+        sorted_kda_synergy = sorted(kda_synergy.items(), key=lambda x: x[1], reverse=True)
+        teammate_names, kdas = zip(*sorted_kda_synergy)
+
+        sns.barplot(x=kdas, y=teammate_names, hue=teammate_names, ax=axes[i, 1], palette='mako', dodge=False)
+        axes[i, 1].set_title(f'KDA Synergy for {champion}')
+        axes[i, 1].set_xlabel('Average KDA')
+        axes[i, 1].set_ylabel('Teammate Champion')
+        axes[i, 1].legend().set_visible(False)  # Hide legend
+        axes[i, 1].tick_params(axis='y', labelrotation=0, labelsize=8)  # Rotate and adjust y-axis labels
+
+        # Add KDA values to the bars
+        for bar, kda, teammate_name in zip(axes[i, 1].patches, kdas, teammate_names):
+            height = bar.get_height()
+            axes[i, 1].text(bar.get_x() + bar.get_width() + 0.1, bar.get_y() + height / 2, f'{kda:.2f}', ha='left', va='center', fontsize=8, color='black')
+
+    plt.show()

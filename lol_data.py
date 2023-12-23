@@ -178,3 +178,66 @@ def get_item_name(item_id):
         return item_data['data'][str(item_id)]['name']
     else:
         return f"Unknown Item {item_id}"
+    
+
+
+def calculate_champion_synergy(matches, summoner_puuid, top_champions):
+    champion_synergy = {}
+
+    for match in matches:
+        if 'info' in match and 'participants' in match['info']:
+            user_champion = None
+            teammates = []
+
+            for participant in match['info']['participants']:
+                if participant['puuid'] == summoner_puuid:
+                    user_champion = participant['championInfo']['name']
+                else:
+                    teammates.append({
+                        'champion': participant['championInfo']['name'],
+                        'win': participant.get('win', False),
+                        'kills': participant['kills'],
+                        'deaths': participant['deaths'],
+                        'assists': participant['assists']
+                    })
+
+            if user_champion in top_champions:
+                if user_champion not in champion_synergy:
+                    champion_synergy[user_champion] = {}
+
+                for teammate in teammates:
+                    teammate_champion = teammate['champion']
+                    if teammate_champion not in champion_synergy[user_champion]:
+                        champion_synergy[user_champion][teammate_champion] = {'kda': [], 'winrate': [], 'games_played': 0}
+
+                    # Calculate KDA synergy
+                    if teammate['deaths'] > 0:
+                        kda = (teammate['kills'] + teammate['assists']) / teammate['deaths']
+                        champion_synergy[user_champion][teammate_champion]['kda'].append(kda)
+
+                    # Calculate winrate synergy
+                    champion_synergy[user_champion][teammate_champion]['winrate'].append(teammate['win'])
+
+                    # Update games played count
+                    champion_synergy[user_champion][teammate_champion]['games_played'] += 1
+
+    return champion_synergy
+
+
+def get_top_champions(matches, summoner_puuid, num_top_champions=3):
+    champion_played_count = {}
+
+    for match in matches:
+        if 'info' in match and 'participants' in match['info']:
+            for participant in match['info']['participants']:
+                if participant['puuid'] == summoner_puuid:
+                    champion_name = participant['championInfo']['name']
+                    champion_played_count[champion_name] = champion_played_count.get(champion_name, 0) + 1
+
+    # Sort champions based on the number of times played
+    sorted_champions = sorted(champion_played_count.items(), key=lambda x: x[1], reverse=True)
+
+    # Get the top N champions
+    top_champions = [champion[0] for champion in sorted_champions[:num_top_champions]]
+
+    return top_champions
