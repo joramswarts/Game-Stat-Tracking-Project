@@ -13,4 +13,4 @@ This project has multiple goals:
 - Collecting user data and statistics from an API.
 - Developing a Jupyter Notebook in which users can input a in-game username and generate detailed statistics.
 - Optionally, if time allows, creating a PowerBI dashboard that displays general statistics in a user-friendly manner.
-- Create a option for users to save their data to our azure database, the next time someone tries to check their data, first look if its already in the database before scraping.
+- Optionally, create a option for users to save their data to our azure database, the next time someone tries to check their data, first look if its already in the database before scraping.
