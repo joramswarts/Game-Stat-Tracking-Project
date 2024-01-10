@@ -70,3 +70,29 @@ def SynergyTable(unique_id, champion_synergy, cursor, conn):
         print("Synergy-Table gevuld met data!")
     except pyodbc.Error as e:
         print(f"Fout bij het invoegen van data in Synergy-Table: {e}")
+
+
+def SummonerDataTable(unique_id, summoner_data, queue_type, cursor, conn):
+    try:
+        cursor.execute("""
+            MERGE INTO Summoner_Data_Table AS Target
+            USING (VALUES (?, ?, ?, ?)) AS Source (UniqueID, SummonerName, SummonerLevel, QueueType)
+            ON Target.UniqueID = Source.UniqueID
+            WHEN MATCHED THEN
+                UPDATE SET
+                    SummonerName = Source.SummonerName,
+                    SummonerLevel = Source.SummonerLevel,
+                    QueueType = Source.QueueType
+            WHEN NOT MATCHED THEN
+                INSERT (UniqueID, SummonerName, SummonerLevel, QueueType)
+                VALUES (Source.UniqueID, Source.SummonerName, Source.SummonerLevel, Source.QueueType);
+        """,
+        (unique_id,
+        summoner_data['name'],
+        summoner_data['summonerLevel'],
+        queue_type))
+
+        conn.commit()
+        print("Summoner data toegevoegd aan de database!")
+    except pyodbc.Error as e:
+        print(f"Fout bij het invoegen van summoner data in de database: {e}")
