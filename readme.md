@@ -92,6 +92,44 @@ Replace the connection string in the pyodbc.connect call with the one you copied
 
 Now, your Azure SQL Database should be set up and ready for integration with the Game Data Analytics project. If you encounter any issues or need further assistance, feel free to reach out.
 
+## PowerBI
+
+1. **Download PowerBI Desktop:**
+   - If you don't have PowerBI Desktop installed, download and install it from [PowerBI Desktop](https://powerbi.microsoft.com/desktop/).
+
+2. **Open the GitHub Repository:**
+   - Navigate to your GitHub repository where the PowerBI file is stored.
+
+3. **Locate the PowerBI File:**
+   - Find the PowerBI file (with the extension .pbix) in the repository.
+
+4. **Download the PowerBI File:**
+   - Click on the PowerBI file in your GitHub repository.
+   - On the file page, click the "Download" button or use the "Download" option in the "Code" dropdown to save the file to your local machine.
+
+5. **Open PowerBI Desktop:**
+   - Launch PowerBI Desktop on your machine.
+
+6. **Open the Downloaded PowerBI File:**
+   - In PowerBI Desktop, click on "File" in the top menu.
+   - Select "Open" and navigate to the location where you downloaded the PowerBI file.
+   - Select the file and click "Open."
+
+7. **Update Database Connection:**
+   - If the PowerBI file doesn't have the connection information saved, you may need to update the database connection details.
+   - Click on "Refresh" to fetch the latest data from your Azure SQL Database.
+
+8. **Review Visualizations:**
+   - Explore the visualizations and dashboards within the PowerBI file.
+   - Use the filtering and interaction features to analyze the data.
+
+9. **Save Changes (Optional):**
+   - If you make any modifications or updates to the file, save the changes by clicking on "File" and selecting "Save" or "Save As."
+
+10. **Publish to Power BI Service (Optional):**
+   - If you want to share your PowerBI report online or collaborate with others, you can publish the file to the Power BI service.
+   - Click on "Publish" in the top menu and follow the prompts to upload your file to the Power BI service.
+
 For any further assistance or questions related to this project, please feel free to reach out. Good luck with your Game Data Analytics project!
 ```
 
