@@ -1,5 +1,6 @@
 import requests
 import json
+
 def get_summoner_lol_data(api_key, summoner_name, region):
     lol_url = f'https://{region}.api.riotgames.com/lol/summoner/v4/summoners/by-name/{summoner_name}'
     headers = {'X-Riot-Token': api_key}
