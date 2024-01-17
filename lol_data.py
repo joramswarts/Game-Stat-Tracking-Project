@@ -118,7 +118,6 @@ def calculate_win_percentage_per_role(matches, summoner_puuid):
                 for participant in match['info']['participants']:
                     champion_info = participant.get('championInfo', {})
                     champion_name = champion_info.get('name', 'Unknown')
-                    print(f"Champion Name: {champion_name}, Champion ID: {champion_info.get('id')}")
                     if 'individualPosition' in participant:
                         role = participant['individualPosition']
                         # Check if the role is valid
@@ -132,13 +131,11 @@ def calculate_win_percentage_per_role(matches, summoner_puuid):
                                     role_wins[role] += 1
 
         overall_win_percentage = (overall_wins / overall_matches_with_wins) * 100 if overall_matches_with_wins > 0 else 0
-        print(f"Overall Win Percentage: {overall_win_percentage:.2f}% (Total Matches: {overall_matches_with_wins})")
 
         win_percentages = {"Overall": {"Win Percentage": overall_win_percentage, "Total Matches": overall_matches_with_wins}}
 
         for role in ["TOP", "JUNGLE", "MIDDLE", "BOTTOM", "UTILITY"]:
             role_win_percentage = (role_wins[role] / role_matches_with_wins[role]) * 100 if role_matches_with_wins[role] > 0 else 0
-            print(f"Win Percentage for {role.capitalize()} role: {role_win_percentage:.2f}% (Total Matches: {role_matches_with_wins[role]})")
             win_percentages[role.capitalize()] = {"Win Percentage": role_win_percentage, "Total Matches": role_matches_with_wins[role]}
 
         return win_percentages
@@ -241,3 +238,23 @@ def get_top_champions(matches, summoner_puuid, num_top_champions=3):
     top_champions = [champion[0] for champion in sorted_champions[:num_top_champions]]
 
     return top_champions
+
+
+def get_match_data_extended(api_key, match_id, region):
+    try:
+        response = requests.get(
+            f"https://{region}.api.riotgames.com/lol/match/v5/matches/{match_id}",
+            headers={"X-Riot-Token": api_key}
+        )
+        response.raise_for_status()
+        match_data = response.json()
+        return match_data
+    except requests.exceptions.HTTPError as errh:
+        print("HTTP Error:", errh)
+    except requests.exceptions.ConnectionError as errc:
+        print("Error Connecting:", errc)
+    except requests.exceptions.Timeout as errt:
+        print("Timeout Error:", errt)
+    except requests.exceptions.RequestException as err:
+        print("Error:", err)
+    return None
