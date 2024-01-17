@@ -1,6 +1,5 @@
 import pyodbc
 from lol_data import calculate_win_percentage_per_role, get_match_data_extended
-
 import hashlib
 
 def generate_unique_id(summoner_name, queue_type):
