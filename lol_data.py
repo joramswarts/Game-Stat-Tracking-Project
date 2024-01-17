@@ -1,5 +1,6 @@
 import requests
 import json
+
 def get_summoner_lol_data(api_key, summoner_name, region):
     lol_url = f'https://{region}.api.riotgames.com/lol/summoner/v4/summoners/by-name/{summoner_name}'
     headers = {'X-Riot-Token': api_key}
@@ -53,7 +54,6 @@ def get_match_ids(api_key, puuid, region, queue_type=None, start_time=None, end_
 
     matchlist_url = f'https://{routing_value}.api.riotgames.com/lol/match/v5/matches/by-puuid/{puuid}/ids'
     headers = {'X-Riot-Token': api_key}
-
     params = {'startTime': start_time, 'endTime': end_time, 'count': count, 'queue': queue_id}
 
     try:

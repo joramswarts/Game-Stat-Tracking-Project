@@ -9,7 +9,6 @@ def generate_unique_id(summoner_name, queue_type):
 
 def WinrateTable(matches, summoner_data, summoner_name, queue_type, cursor, conn):
     win_percentages = calculate_win_percentage_per_role(matches, summoner_data['puuid'])
-
     unique_id = generate_unique_id(summoner_name, queue_type)
 
     try:

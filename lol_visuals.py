@@ -302,3 +302,4 @@ def visualize_champion_synergy(champion_synergy, top_champions, min_games_played
         ax1.tick_params(axis='x', colors='white')
         ax1.tick_params(axis='y', colors='white')
     plt.show()
+    
