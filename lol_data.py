@@ -54,7 +54,6 @@ def get_match_ids(api_key, puuid, region, queue_type=None, start_time=None, end_
 
     matchlist_url = f'https://{routing_value}.api.riotgames.com/lol/match/v5/matches/by-puuid/{puuid}/ids'
     headers = {'X-Riot-Token': api_key}
-
     params = {'startTime': start_time, 'endTime': end_time, 'count': count, 'queue': queue_id}
 
     try:
