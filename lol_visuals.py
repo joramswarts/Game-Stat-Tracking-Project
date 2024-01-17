@@ -1,3 +1,4 @@
+# Importing all libraries and data needed to run visuals
 import matplotlib.pyplot as plt
 import plotly.graph_objects as go
 from lol_data import get_item_name
@@ -5,20 +6,19 @@ import datetime
 import seaborn as sns
 import numpy as np
 
-
+# Barplot that gives insight about win percentages per role
 def visualize_win_percentages(win_percentages):
-    # Visualization using matplotlib
     labels = list(win_percentages.keys())
-    values = [data["Win Percentage"] for data in win_percentages.values()]  # Extract win percentages
+    values = [data["Win Percentage"] for data in win_percentages.values()]
 
-    fig, ax = plt.subplots(figsize=(8, 7), facecolor='#191A24')  # Voeg de facecolor toe
+    # Add styling for the plot
+    fig, ax = plt.subplots(figsize=(8, 7), facecolor='#191A24')
     ax.set_facecolor('#232448')
-    fig.subplots_adjust(top=0.85, bottom=0.15)  # Adjust the top and bottom space
+    fig.subplots_adjust(top=0.85, bottom=0.15)
     fig.set_facecolor('#191A24')
 
-
     bars = ax.bar(labels, values, color='#56C596')
-    plt.title('Win Percentages for Different Roles', y=1.1, color='white')  # Adjust the title position
+    plt.title('Win Percentages for Different Roles', y=1.1, color='white')
     plt.xlabel('Roles', color='white')
     plt.ylabel('Win Percentage', color='white')
 
@@ -30,12 +30,12 @@ def visualize_win_percentages(win_percentages):
 
         # Check if the text will overlap with the top border
         if text_y > ax.get_ylim()[1] - 1:
-            text_y = ax.get_ylim()[1] - 1 - 2  # Adjust the y-coordinate to leave a small gap at the top
+            text_y = ax.get_ylim()[1] - 1 - 2
 
         ax.annotate(text, (text_x, text_y), ha='center', va='bottom',
-                    xytext=(0, 8), textcoords='offset points', color='white', fontsize=8)  # Adjust xytext for vertical offset
+                    xytext=(0, 8), textcoords='offset points', color='white', fontsize=8)
 
-    # Set y-axis limits to always span from 0 to 100 with a small gap at the top
+    # Set y-axis limits to always go from 0 to 100 with a small gap at the top
     ax.set_ylim(0, 102)
     ax.tick_params(axis='x', colors='white')
     ax.tick_params(axis='y', colors='white')
@@ -43,16 +43,16 @@ def visualize_win_percentages(win_percentages):
     plt.tight_layout()
     plt.show()
 
-
+# Lineplot that gives insight about win percentages in the last 2 weeks
 def plot_win_percentage_over_time(matches, summoner_data):
-    # Verzamel datums voor elke wedstrijd
+    # Gather dates from each match
     match_dates = [datetime.datetime.utcfromtimestamp(match['info']['gameCreation'] // 1000).strftime('%Y-%m-%d') for match in matches]
 
-    # Verkrijg datums van de afgelopen 14 dagen
+    # Gather dates from the last 14 days
     last_two_weeks = datetime.datetime.utcnow() - datetime.timedelta(days=14)
     recent_dates = [date for date in sorted(set(match_dates)) if datetime.datetime.strptime(date, '%Y-%m-%d') >= last_two_weeks]
 
-    # Houd winstpercentages, datums en het aantal wedstrijden bij voor elke dag
+    # Count WR, dates and amount of matches for each day
     win_percentages_by_date = []
     num_matches_by_date = []
 
@@ -64,12 +64,12 @@ def plot_win_percentage_over_time(matches, summoner_data):
         win_percentages_by_date.append(win_percentage_on_date)
         num_matches_by_date.append(total_matches_on_date)
     
-    # Print het totaal aantal wedstrijden in de terminal
+    # Count total games
     total_games = sum(num_matches_by_date)
     print(f"Total games in the last two weeks for this queue type: {total_games}")
 
-    # Plot de lijngrafiek
-    fig, ax = plt.subplots(facecolor='#191A24')  # Voeg de facecolor toe
+    # Plot the lineplot and add styling
+    fig, ax = plt.subplots(facecolor='#191A24')
     ax.set_facecolor('#232448')
     ax.plot(sorted(set(recent_dates)), win_percentages_by_date, marker='o', color='#56C596')
 
@@ -77,11 +77,11 @@ def plot_win_percentage_over_time(matches, summoner_data):
     plt.xlabel('Date', color='white')
     plt.ylabel('Win Percentage', color='white')
 
-    # Stel de stappen op de y-as in van 0 naar 100
+    # Set y-axis limits to always span from 0 to 100
     ax.set_yticks(range(0, 101, 10))
     ax.set_yticklabels([f"{i}%" for i in range(0, 101, 10)])
 
-    # Voeg winstpercentages en het aantal wedstrijden toe aan de bolletjes
+    # Add the WR and amount of matches to the points in the plot
     for date, win_percentage, num_matches in zip(sorted(set(recent_dates)), win_percentages_by_date, num_matches_by_date):
         if win_percentage is not None:
             ax.text(date, win_percentage, f"{win_percentage:.2f}%\n{num_matches} games", ha='right', va='bottom', fontsize=8, color='white')
@@ -92,6 +92,7 @@ def plot_win_percentage_over_time(matches, summoner_data):
     plt.tight_layout()
     plt.show()
 
+# Barplot that gives insight about win percentages and KDA from all champions played by user.
 def visualize_champion_stats(matches, summoner_data):
     summoner_puuid = summoner_data['puuid']
 
@@ -119,13 +120,13 @@ def visualize_champion_stats(matches, summoner_data):
         stats['WinRate'] = (stats['Wins'] / stats['TotalGames']) * 100 if stats['TotalGames'] > 0 else 0
         stats['KDA'] /= stats['TotalGames']
 
-    # Visualization using matplotlib
+    # Gathering plot values
     labels = list(champion_stats.keys())
     kdas = [data['KDA'] for data in champion_stats.values()]
     win_rates = [data['WinRate'] for data in champion_stats.values()]
     total_games = [data['TotalGames'] for data in champion_stats.values()]
 
-    fig, ax = plt.subplots(figsize=(12, 7), facecolor='#191A24')  # Voeg de facecolor toe
+    fig, ax = plt.subplots(figsize=(12, 7), facecolor='#191A24')
     ax.set_facecolor('#232448')
 
     bars = ax.bar(labels, kdas, alpha=0.7, label='KDA', color='#56C596')
@@ -148,7 +149,7 @@ def visualize_champion_stats(matches, summoner_data):
     plt.tight_layout()
     plt.show()
 
-
+# Table visual that gives insight about best item builds for each champion calculated by user winrate.
 def create_table_visual(matches, summoner_puuid):
     # Create the table_data
     table_data = []
@@ -242,6 +243,7 @@ def create_table_visual(matches, summoner_puuid):
 
     fig.show()
 
+# Barplot that gives insight about the synergy from your top 3 most played champions with the other champions in game.
 def visualize_champion_synergy(champion_synergy, top_champions, min_games_played=2):
     # Set up subplots for each top champion
     num_top_champions = len(top_champions)
